@@ -2,7 +2,7 @@
 vim.opt.clipboard = vim.env.SSH_CONNECTION and "" or "unnamedplus" -- Sync with clipboard
 
 -- Realtive Line numbers
--- vim.opt.nu = true
+vim.opt.nu = true
 vim.opt.relativenumber = true
 
 vim.opt.tabstop = 4
