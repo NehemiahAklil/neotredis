@@ -42,6 +42,12 @@ return {
 		end
 		neotree.setup({
 			sources = { "filesystem", "buffers", "git_status" },
+			sync_root_with_cwd = true,
+			respect_buf_cwd = true,
+			update_focused_file = {
+				enable = true,
+				update_root = true,
+			},
 			hide_root_node = true,
 			retain_hidden_root_indent = false,
 			enable_git_status = false,
