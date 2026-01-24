@@ -9,6 +9,13 @@ return {
 		{
 			"<leader>e",
 			function()
+				require("neo-tree.command").execute({ toggle = false })
+			end,
+			desc = "Explorer NeoTree",
+		},
+		{
+			"<leader>b",
+			function()
 				require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
 			end,
 			desc = "Explorer NeoTree",
