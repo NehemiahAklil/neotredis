@@ -13,6 +13,12 @@ vim.opt.rtp:prepend(lazypath)
 vim.opt.background = "dark" -- set this to dark or light
 
 require("lazy").setup({
-	spec = "neotredis.plugins",
+	spec = {
+        -- Load every common plugins
+        { import = "neotredis.plugins" },
+
+        -- Load AI plugins
+        { import = "neotredis.plugins.ai" },
+    },
 	change_detection = { notify = false },
 })
