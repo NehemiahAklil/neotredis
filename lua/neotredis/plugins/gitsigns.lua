@@ -1,6 +1,7 @@
 return {
 	"lewis6991/gitsigns.nvim",
 	opts = {
+		current_line_blame = true,
 		signs = {
 			add = { text = "▎" },
 			change = { text = "▎" },
@@ -17,9 +18,4 @@ return {
 			changedelete = { text = "▎" },
 		},
 	},
-	config = function()
-		require("gitsigns").setup({
-			current_line_blame = true,
-		})
-	end,
 }
