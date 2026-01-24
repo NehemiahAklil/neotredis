@@ -43,6 +43,12 @@ return {
 		---@type Neominimap.UserConfig
 		vim.g.neominimap = {
 			auto_enable = true,
+			-- Add "dashboard" to exclusion list
+			exclude_filetypes = {
+				"dashboard",
+				"lazy",
+				"mason",
+			},
 		}
 	end,
 }
