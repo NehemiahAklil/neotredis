@@ -2,7 +2,10 @@ return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
 		"stevearc/conform.nvim",
-		"mason-org/mason.nvim",
+		{
+			"mason-org/mason.nvim",
+			opts = { ensure_installed = { "pyright", "gopls", "html", "ts_ls", "emmet_ls", "vue_ls" } },
+		},
 		{ "mason-org/mason-lspconfig.nvim", config = function() end },
 		{ "hrsh7th/cmp-nvim-lsp" },
 		{ "hrsh7th/nvim-cmp" },
@@ -44,22 +47,6 @@ return {
 				end
 			end,
 		})
-
-		local gopls_settings = {
-			analyses = {
-				unusedparams = true,
-			},
-			hints = {
-				assignVariableTypes = true,
-				compositeLiteralFields = true,
-				compositeLiteralTypes = true,
-				constantValues = true,
-				functionTypeParameters = true,
-				parameterNames = true,
-				rangeVariableTypes = true,
-			},
-		}
-
 		-- Get Vue Language Server path from Mason
 		local vue_language_server_path = vim.fn.stdpath("data")
 			.. "/mason/packages/vue-language-server/node_modules/@vue/language-server"
@@ -74,6 +61,20 @@ return {
 		}
 
 		-- Configure gopls
+		local gopls_settings = {
+			analyses = {
+				unusedparams = true,
+			},
+			hints = {
+				assignVariableTypes = true,
+				compositeLiteralFields = true,
+				compositeLiteralTypes = true,
+				constantValues = true,
+				functionTypeParameters = true,
+				parameterNames = true,
+				rangeVariableTypes = true,
+			},
+		}
 		vim.lsp.config("gopls", {
 			capabilities = capabilities,
 			settings = {
@@ -85,7 +86,9 @@ return {
 		vim.lsp.config("html", {
 			capabilities = capabilities,
 		})
-
+		vim.lsp.config("pyright", {
+			capabilities = capabilities,
+		})
 		-- Configure vtsls with Vue plugin
 		vim.lsp.config("vtsls", {
 			capabilities = capabilities,
@@ -150,7 +153,7 @@ return {
 		})
 
 		-- Enable all configured servers
-		vim.lsp.enable({ "gopls", "html", "ts_ls", "emmet_ls", "vue_ls" })
+		vim.lsp.enable({ "gopls", "html", "ts_ls", "emmet_ls", "vue_ls", "pyright" })
 
 		-- Set highlight group for Vue components
 		vim.api.nvim_set_hl(0, "@lsp.type.component", { link = "@type" })
