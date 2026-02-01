@@ -2,6 +2,7 @@ require("neotredis.options")
 require("neotredis.autocmd")
 require("neotredis.remap")
 require("neotredis.lazy")
+require("neotredis.neovide")
 
 vim.cmd("colorscheme ayu-dark")
 
