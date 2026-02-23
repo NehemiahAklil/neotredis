@@ -100,8 +100,8 @@ return {
 
 			-- Provider configuration for managing opencode
 			provider = {
-				enabled = "snacks", -- Use tmux for terminal experience
-				-- enabled = "tmux", -- Use tmux for terminal experience
+				-- enabled = vim.g.neovide and "snacks" or "tmux", -- Use tmux for terminal experience
+				enabled = "snacks",
 				cmd = "opencode --port", -- Base command (port auto-appended)
 				snacks = {
 					auto_close = true, -- Close terminal when opencode exits
@@ -120,9 +120,9 @@ return {
 				},
 				-- Alternative: tmux provider (if you prefer tmux over snacks terminal)
 				-- Uncomment below and set enabled = 'tmux' to use tmux instead
-				-- tmux = {
-				-- 	options = "-h -p 28", -- Horizontal split (vertical pane), 28% width
-				-- },
+				tmux = {
+					options = "-h -p 28", -- Horizontal split (vertical pane), 28% width
+				},
 			},
 		}
 
@@ -131,22 +131,22 @@ return {
 		-- ============================================================================
 
 		-- Ask opencode with context (most common workflow)
-		vim.keymap.set({ "n", "x" }, "<leader>oa", function()
+		vim.keymap.set({ "n", "x" }, "<C-a>", function()
 			require("opencode").ask("@this: ", { submit = true })
 		end, { desc = "Ask opencode about selection/cursor" })
 
 		-- Ask opencode (empty prompt, no auto-submit)
-		vim.keymap.set({ "n", "x" }, "<leader>oA", function()
+		vim.keymap.set({ "n", "x" }, "<C-a>", function()
 			require("opencode").ask()
 		end, { desc = "Ask opencode (empty prompt)" })
 
 		-- Select from prompt library, commands, or provider controls
-		vim.keymap.set({ "n", "x" }, "<leader>ox", function()
+		vim.keymap.set({ "n", "x" }, "<C-x>", function()
 			require("opencode").select()
 		end, { desc = "Execute opencode action (picker)" })
 
 		-- Toggle opencode terminal
-		vim.keymap.set({ "n", "t" }, "<leader>ot", function()
+		vim.keymap.set({ "n", "t" }, "<C-.>", function()
 			require("opencode").toggle()
 		end, { desc = "Toggle opencode terminal" })
 
@@ -194,7 +194,7 @@ return {
 		end, { desc = "Compact opencode session" })
 
 		-- Undo/Redo in opencode session
-		vim.keymap.set("n", "<leader>ou", function()
+		vim.keymap.set("n", "<leader>oz", function()
 			require("opencode").command("session.undo")
 		end, { desc = "Undo in opencode session" })
 
@@ -212,6 +212,8 @@ return {
 				{ "<leader>ox", desc = "Select action" },
 				{ "<leader>ot", desc = "Toggle terminal" },
 				{ "<leader>ou", desc = "Scroll up" },
+				{ "<leader>oz", desc = "Undo session action" },
+				{ "<leader>or", desc = "Redo session action" },
 				{ "<leader>od", desc = "Scroll down" },
 				{ "<leader>og", desc = "Jump to first" },
 				{ "<leader>oG", desc = "Jump to last" },

@@ -16,3 +16,6 @@ end, { desc = "Copy path with line number" })
 vim.keymap.set("n", "<leader>r", function()
 	utils.replace_hex_with_HSL()
 end, { desc = "Replace hex with HSL" })
+
+-- Exit terminal mode
+vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
