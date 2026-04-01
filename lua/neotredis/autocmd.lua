@@ -1,6 +1,40 @@
 local TheNeotredisGroup = vim.api.nvim_create_augroup("TheNeotredis", {})
 local autocmd = vim.api.nvim_create_autocmd
 
+-- Vue context-aware commenting: detect embedded language at cursor and set correct commentstring
+local vue_commentstrings = {
+	vue = "<!-- %s -->",
+	html = "<!-- %s -->",
+	javascript = "// %s",
+	typescript = "// %s",
+	css = "/* %s */",
+	scss = "// %s",
+}
+
+local function update_vue_commentstring()
+	local ok, parser = pcall(vim.treesitter.get_parser, 0)
+	if not ok or not parser then
+		return
+	end
+
+	local cursor = vim.api.nvim_win_get_cursor(0)
+	local row, col = cursor[1] - 1, cursor[2]
+
+	local lang_tree = parser:language_for_range({ row, col, row, col })
+	if lang_tree then
+		local lang = lang_tree:lang()
+		if vue_commentstrings[lang] then
+			vim.bo.commentstring = vue_commentstrings[lang]
+		end
+	end
+end
+
+autocmd({ "CursorMoved", "CursorMovedI" }, {
+	group = TheNeotredisGroup,
+	pattern = "*.vue",
+	callback = update_vue_commentstring,
+})
+
 autocmd({ "BufWritePre" }, {
 	group = TheNeotredisGroup,
 	pattern = "*",
