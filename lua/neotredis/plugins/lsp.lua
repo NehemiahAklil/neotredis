@@ -41,10 +41,10 @@ return {
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
 				local bufopts = { noremap = true, silent = true, buffer = args.buf }
 
-				-- Disable semantic tokens for ts_ls in Vue files to avoid conflicts
-				if client and client.name == "ts_ls" and vim.bo.filetype == "vue" then
-					client.server_capabilities.semanticTokensProvider = nil
-				end
+			-- Disable semantic tokens for ts_ls in Vue files to avoid conflicts
+			if client and client.name == "ts_ls" and vim.bo.filetype == "vue" then
+				client.server_capabilities.semanticTokensProvider = false
+			end
 			end,
 		})
 		-- Get Vue Language Server path from Mason
