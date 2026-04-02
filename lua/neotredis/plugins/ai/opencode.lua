@@ -76,7 +76,7 @@ return {
 						["prompt.submit"] = "Submit the current prompt",
 						["prompt.clear"] = "Clear the current prompt",
 					},
-					provider = true, -- Show provider controls (start/stop/toggle)
+					server = true, -- Show server controls (start/stop/toggle)
 				},
 				-- Snacks picker configuration
 				snacks = {
@@ -98,31 +98,43 @@ return {
 				},
 			},
 
-			-- Provider configuration for managing opencode
-			provider = {
-				-- enabled = vim.g.neovide and "snacks" or "tmux", -- Use tmux for terminal experience
-				enabled = "snacks",
-				cmd = "opencode --port", -- Base command (port auto-appended)
-				snacks = {
-					auto_close = true, -- Close terminal when opencode exits
-					win = {
-						position = "right", -- Vertical split on the right
-						width = 0.27, -- 27% of screen width
-						enter = true, -- Keep focus in editor
-						border = "rounded",
-						wo = {
-							winbar = "", -- No winbar (opencode TUI has its own footer)
+			-- Server configuration for managing opencode
+			server = {
+				start = function()
+					local opencode_cmd = "opencode --port"
+					---@type snacks.terminal.Opts
+					local snacks_terminal_opts = {
+						win = {
+							position = "right",
+							width = 0.27,
+							enter = false,
+							border = "rounded",
+							on_win = function(win)
+								require("opencode.terminal").setup(win.win)
+							end,
 						},
-						bo = {
-							filetype = "opencode_terminal", -- Custom filetype for targeting
+					}
+					require("snacks.terminal").open(opencode_cmd, snacks_terminal_opts)
+				end,
+				stop = function()
+					require("snacks.terminal").get("opencode --port"):close()
+				end,
+				toggle = function()
+					local opencode_cmd = "opencode --port"
+					---@type snacks.terminal.Opts
+					local snacks_terminal_opts = {
+						win = {
+							position = "right",
+							width = 0.27,
+							enter = false,
+							border = "rounded",
+							on_win = function(win)
+								require("opencode.terminal").setup(win.win)
+							end,
 						},
-					},
-				},
-				-- Alternative: tmux provider (if you prefer tmux over snacks terminal)
-				-- Uncomment below and set enabled = 'tmux' to use tmux instead
-				tmux = {
-					options = "-h -p 28", -- Horizontal split (vertical pane), 28% width
-				},
+					}
+					require("snacks.terminal").toggle(opencode_cmd, snacks_terminal_opts)
+				end,
 			},
 		}
 
