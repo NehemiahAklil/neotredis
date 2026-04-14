@@ -1,7 +1,7 @@
 ---@module "neominimap.config.meta"
 return {
 	"Isrothy/neominimap.nvim",
-	version = "v3.x.x",
+	-- version = "v3.x.x",
 	lazy = false, -- NOTE: NO NEED to Lazy load
 	-- Optional. You can also set your own keybindings
 	keys = {
@@ -48,6 +48,10 @@ return {
 				"dashboard",
 				"lazy",
 				"mason",
+			},
+			-- Fix for Neovim 0.12+ border handling
+			float = {
+				window_border = "none", -- or "single", "double", "rounded", etc.
 			},
 		}
 	end,
