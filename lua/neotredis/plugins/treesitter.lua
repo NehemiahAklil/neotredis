@@ -1,5 +1,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
+	branch = "main",
 	cmd = "TSUpdate",
 	opts = {
 		auto_install = true,
