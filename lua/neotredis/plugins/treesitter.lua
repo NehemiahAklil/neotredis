@@ -1,4 +1,12 @@
 return {
+	"https://github.com/arborist-ts/arborist.nvim",
+	lazy = false,
+	opts = {
+		install_popular = true,
+		update_cadence = "weekly",
+	},
+}
+--[[ return {
 	"nvim-treesitter/nvim-treesitter",
 	branch = "main",
 	cmd = "TSUpdate",
@@ -43,4 +51,5 @@ return {
 			"yaml",
 		},
 	},
-}
+} ]]
+--

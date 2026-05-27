@@ -45,7 +45,12 @@ return {
 			provider_selector = function(bufnr, filetype, buftype)
 				return { "treesitter", "indent" }
 			end,
+			-- highlight the folded line briefly when opening
+			open_fold_hl_timeout = 150,
+			-- fold imports/comments by default on entry, leave functions open
+			close_fold_kinds_for_ft = {
+				default = { "imports", "comment" },
+			},
 		})
-		require("ufo").setup()
 	end,
 }

@@ -1,5 +1,6 @@
 return {
 	"nvim-treesitter/nvim-treesitter-context",
+	dependencies = { "arborist-ts/arborist.nvim" },
 	opts = {
 		enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
 		multiwindow = false, -- Enable multiwindow support.
