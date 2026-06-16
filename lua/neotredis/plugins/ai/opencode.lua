@@ -29,13 +29,13 @@ return {
 		vim.g.opencode_opts = {
 			server = {
 				toggle = function()
-					require("opencode.terminal").toggle("/home/archtreides/.opencode/bin/opencode --port", {
+					require("opencode.terminal").toggle("opencode --port", {
 						split = "right",
 						width = math.floor(vim.o.columns * 0.35),
 					})
 				end,
 				start = function()
-					require("opencode.terminal").open("/home/archtreides/.opencode/bin/opencode --port", {
+					require("opencode.terminal").open("opencode --port", {
 						split = "right",
 						width = math.floor(vim.o.columns * 0.35),
 					})
