@@ -25,20 +25,31 @@ return {
 		},
 	},
 	config = function()
+		local opencode_cmd = "opencode --port"
+
+		---@type snacks.terminal.Opts
+		local snacks_terminal_opts = {
+			win = {
+				position = "right",
+				width = math.floor(vim.o.columns * 0.35),
+				enter = false,
+				-- on_win = function(win)
+				-- 	require("opencode.terminal").setup(win.win)
+				-- end,
+			},
+		}
+
 		---@type opencode.Opts
 		vim.g.opencode_opts = {
 			server = {
-				toggle = function()
-					require("opencode.terminal").toggle("opencode --port", {
-						split = "right",
-						width = math.floor(vim.o.columns * 0.35),
-					})
-				end,
 				start = function()
-					require("opencode.terminal").open("opencode --port", {
-						split = "right",
-						width = math.floor(vim.o.columns * 0.35),
-					})
+					require("snacks.terminal").open(opencode_cmd, snacks_terminal_opts)
+				end,
+				stop = function()
+					require("snacks.terminal").get(opencode_cmd, snacks_terminal_opts):close()
+				end,
+				toggle = function()
+					require("snacks.terminal").toggle(opencode_cmd, snacks_terminal_opts)
 				end,
 			},
 			lsp = {
@@ -64,7 +75,7 @@ return {
 
 		-- Toggle opencode terminal
 		vim.keymap.set({ "n", "t" }, "<C-.>", function()
-			require("opencode").toggle()
+			require("snacks.terminal").toggle(opencode_cmd, snacks_terminal_opts)
 		end, { desc = "Toggle opencode terminal" })
 
 		-- Operator mapping for Vim-style workflows
@@ -108,7 +119,7 @@ return {
 		end, { desc = "Select opencode action" })
 
 		vim.keymap.set("n", "<leader>ot", function()
-			require("opencode").toggle()
+			require("snacks.terminal").toggle(opencode_cmd, snacks_terminal_opts)
 		end, { desc = "Toggle opencode terminal" })
 
 		vim.keymap.set("n", "<leader>ou", function()
