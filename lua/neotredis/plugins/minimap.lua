@@ -49,9 +49,17 @@ return {
 				"lazy",
 				"mason",
 			},
+			-- Lower multiplier = less column compression = more accurate line
+			-- shapes on the minimap.
+			x_multiplier = 2,
+			-- Highlight search matches on the minimap too.
+			search = {
+				enabled = true,
+			},
 			-- Fix for Neovim 0.12+ border handling
 			float = {
 				window_border = "none", -- or "single", "double", "rounded", etc.
+				minimap_width = 10,
 			},
 		}
 	end,
