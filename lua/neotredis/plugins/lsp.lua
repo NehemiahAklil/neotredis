@@ -6,7 +6,7 @@ return {
 		{
 			"mason-org/mason-lspconfig.nvim",
 			opts = {
-				ensure_installed = { "pyright", "gopls", "html", "ts_ls", "emmet_ls", "vue_ls" },
+				ensure_installed = { "pyright", "gopls", "html", "ts_ls", "emmet_ls", "vue_ls", "lua_ls" },
 				automatic_enable = false,
 			},
 		},
@@ -122,6 +122,18 @@ return {
 			filetypes = { "html", "css", "template" },
 		})
 
+		-- Configure lua_ls (lazydev.nvim supplies nvim API / plugin library types)
+		vim.lsp.config("lua_ls", {
+			capabilities = capabilities,
+			settings = {
+				Lua = {
+					workspace = { checkThirdParty = false },
+					codeLens = { enable = true },
+					completion = { callSnippet = "Replace" },
+				},
+			},
+		})
+
 		-- Configure vue_ls (renamed from volar)
 		-- Note: On recent nvim-lspconfig, on_init is automatically configured
 		vim.lsp.config("vue_ls", {
@@ -156,7 +168,7 @@ return {
 		})
 
 		-- Enable all configured servers
-		vim.lsp.enable({ "gopls", "html", "ts_ls", "emmet_ls", "vue_ls", "pyright" })
+		vim.lsp.enable({ "gopls", "html", "ts_ls", "emmet_ls", "vue_ls", "pyright", "lua_ls" })
 
 		-- Set highlight group for Vue components
 		vim.api.nvim_set_hl(0, "@lsp.type.component", { link = "@type" })
