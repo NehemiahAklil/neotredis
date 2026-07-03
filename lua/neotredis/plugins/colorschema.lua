@@ -18,6 +18,7 @@ return {
 		-- overrides = function(colors) -- add/modify highlights
 		--     return {}
 		-- end,
+		lazy = true,
 		theme = "dragon", -- Load "wave" theme
 		background = { -- map the value of 'background' option to a theme
 			dark = "dragon", -- try "dragon" !
@@ -33,12 +34,14 @@ return {
 	{
 		"catppuccin/nvim",
 		name = "catppuccin",
+		lazy = true,
 		config = function()
 			-- vim.cmd("colorscheme catppuccin")
 		end,
 	},
 	{
 		"nyoom-engineering/oxocarbon.nvim",
+		lazy = true,
 		priority = 1000,
 		config = function()
 			-- vim.cmd("colorscheme oxocarbon")
