@@ -30,5 +30,20 @@ return {
 			end,
 			desc = "Toggle Zoom",
 		},
+		{
+			"<leader>gg",
+			function()
+				Snacks.lazygit()
+			end,
+			desc = "Lazygit",
+		},
+		{
+			"<leader>gB",
+			function()
+				Snacks.gitbrowse()
+			end,
+			mode = { "n", "v" },
+			desc = "Git browse (open in remote)",
+		},
 	},
 }

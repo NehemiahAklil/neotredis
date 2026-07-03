@@ -39,7 +39,7 @@
 | `lua/neotredis/plugins/lsp.lua` | LSP servers, mason, diagnostics config. |
 | `lua/neotredis/plugins/lazydev.lua` | `lazydev.nvim` — Lua/nvim-API completion for `lua_ls`. |
 | `lua/neotredis/plugins/autocomplete.lua` | `nvim-cmp` sources and mappings. |
-| `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker, zen). |
+| `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker, zen); git keymaps `<leader>gg` lazygit, `<leader>gB` gitbrowse. |
 | `lua/neotredis/plugins/treesitter.lua` | Treesitter via `arborist.nvim`. |
 | `lua/neotredis/plugins/telescope.lua` | Fuzzy finder + keymaps (`<leader>f*`). |
 | `lua/neotredis/plugins/flash.lua` | `flash.nvim` — jump/search motion (`s`/`S`/`r`/`R`). |
@@ -48,7 +48,9 @@
 | `lua/neotredis/plugins/file_tree.lua` | neo-tree file explorer. |
 | `lua/neotredis/plugins/file_browser.lua` | telescope-file-browser extension. |
 | `lua/neotredis/plugins/harpoon.lua` | harpoon2 quick-file navigation. |
-| `lua/neotredis/plugins/git.lua`, `gitsigns.lua`, `gitconflict.lua` | Git integration. |
+| `lua/neotredis/plugins/git.lua`, `gitsigns.lua`, `gitconflict.lua` | Git integration (fugitive `<leader>gs`; gitsigns hunk keymaps `<leader>h*`, `]h`/`[h`; git-conflict). |
+| `lua/neotredis/plugins/diffview.lua` | `diffview.nvim` — diffs, file history, merge view (`<leader>gd*`). |
+| `lua/neotredis/plugins/gitgraph.lua` | `gitgraph.nvim` — branch/commit line-graph (`<leader>gl`), opens commits in diffview. |
 | `lua/neotredis/plugins/dashboard.lua` | Startup dashboard (`dashboard-nvim`; slated for `snacks.dashboard` in Stage 4). |
 | `lua/neotredis/plugins/terminal.lua` | Floating terminal (`FTerm.nvim`; slated for `snacks.terminal` in Stage 4). |
 | `lua/neotredis/plugins/zenmode.lua` | `true-zen.nvim` (`<leader>zn/zf/zm/za`). |
