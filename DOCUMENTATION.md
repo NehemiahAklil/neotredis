@@ -107,3 +107,66 @@ full project-wide view.
 | `<leader>xt` | Open all todo comments in Trouble |
 | `<leader>xT` | Open only TODO/FIX/FIXME comments in Trouble |
 | `<leader>ft` | Open todo comments in Telescope |
+
+## Stage 3c — Git
+
+Rounds out git tooling. The porcelain (staging/committing) is handled by
+`lazygit` via `snacks.nvim`; `vim-fugitive` (`<leader>gs`) and
+`git-conflict.nvim` were already present.
+
+### `lewis6991/gitsigns.nvim`
+
+Shows per-line git status in the sign column and inline blame on the current
+line. Now wired with the standard hunk workflow via `on_attach`.
+
+**Keymaps:**
+
+| Key | Mode | Action |
+|---|---|---|
+| `]h` / `[h` | normal | Next / previous hunk (falls back to `]c`/`[c` in diff mode) |
+| `<leader>hs` | normal, visual | Stage hunk (or selected lines) |
+| `<leader>hr` | normal, visual | Reset hunk (or selected lines) |
+| `<leader>hS` | normal | Stage entire buffer |
+| `<leader>hR` | normal | Reset entire buffer |
+| `<leader>hu` | normal | Undo last stage hunk |
+| `<leader>hp` | normal | Preview hunk inline |
+| `<leader>hb` | normal | Blame current line (full) |
+| `<leader>hd` | normal | Diff current buffer against index |
+| `ih` | operator, visual | Select-hunk text object (e.g. `vih`, `dih`) |
+
+### `sindrets/diffview.nvim`
+
+Single-tabpage diff, full file/branch history, and a 3-way merge-conflict view.
+Lazy-loaded on its `:Diffview*` commands.
+
+**Keymaps:**
+
+| Key | Action |
+|---|---|
+| `<leader>gdo` | Open diff of the working tree |
+| `<leader>gdc` | Close the diffview tab |
+| `<leader>gdh` | File history for the whole repo |
+| `<leader>gdf` | File history for the current file |
+
+### `isakbm/gitgraph.nvim`
+
+Draws the commit graph — branches, forks, diverges, merges, rebases — as line
+graphs in a buffer. Selecting a commit (or a visual range) opens the
+corresponding diff in `diffview.nvim`.
+
+**Keymaps:**
+
+| Key | Action |
+|---|---|
+| `<leader>gl` | Draw the git graph (all branches) |
+
+### `folke/snacks.nvim` (git helpers)
+
+Wired from the existing `snacks.nvim` spec — no extra dependency.
+
+**Keymaps:**
+
+| Key | Mode | Action |
+|---|---|---|
+| `<leader>gg` | normal | Open Lazygit (full git TUI) |
+| `<leader>gB` | normal, visual | Open current line/selection in the git remote (browser) |
