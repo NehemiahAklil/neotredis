@@ -42,6 +42,9 @@
 | `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker, zen). |
 | `lua/neotredis/plugins/treesitter.lua` | Treesitter via `arborist.nvim`. |
 | `lua/neotredis/plugins/telescope.lua` | Fuzzy finder + keymaps (`<leader>f*`). |
+| `lua/neotredis/plugins/flash.lua` | `flash.nvim` — jump/search motion (`s`/`S`/`r`/`R`). |
+| `lua/neotredis/plugins/trouble.lua` | `trouble.nvim` — diagnostics/symbols/references list UI (`<leader>x*`). |
+| `lua/neotredis/plugins/todo_comments.lua` | `todo-comments.nvim` — TODO/FIXME highlighting and nav (`]t`/`[t`, `<leader>x*`, `<leader>ft`). |
 | `lua/neotredis/plugins/file_tree.lua` | neo-tree file explorer. |
 | `lua/neotredis/plugins/file_browser.lua` | telescope-file-browser extension. |
 | `lua/neotredis/plugins/harpoon.lua` | harpoon2 quick-file navigation. |
