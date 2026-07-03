@@ -45,6 +45,8 @@
 | `lua/neotredis/plugins/flash.lua` | `flash.nvim` — jump/search motion (`s`/`S`/`r`/`R`). |
 | `lua/neotredis/plugins/trouble.lua` | `trouble.nvim` — diagnostics/symbols/references list UI (`<leader>x*`). |
 | `lua/neotredis/plugins/todo_comments.lua` | `todo-comments.nvim` — TODO/FIXME highlighting and nav (`]t`/`[t`, `<leader>x*`, `<leader>ft`). |
+| `lua/neotredis/plugins/grug-far.lua` | `grug-far.nvim` — project-wide search & replace over ripgrep (`<leader>sr/sw/sf`). |
+| `lua/neotredis/plugins/mini-ai.lua` | `mini.ai` — extended `a`/`i` text objects (`daf`, `cia`, brackets, quotes, tags). |
 | `lua/neotredis/plugins/file_tree.lua` | neo-tree file explorer. |
 | `lua/neotredis/plugins/file_browser.lua` | telescope-file-browser extension. |
 | `lua/neotredis/plugins/harpoon.lua` | harpoon2 quick-file navigation. |

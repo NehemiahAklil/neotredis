@@ -170,3 +170,42 @@ Wired from the existing `snacks.nvim` spec — no extra dependency.
 |---|---|---|
 | `<leader>gg` | normal | Open Lazygit (full git TUI) |
 | `<leader>gB` | normal, visual | Open current line/selection in the git remote (browser) |
+
+## Stage 3d — Search/replace & text objects
+
+Completes Stage 3 with the two remaining non-git additions.
+
+### `MagicDuck/grug-far.nvim`
+
+Project-wide, incremental search-and-replace over ripgrep, presented in a
+dedicated buffer where you edit the search/replace/paths/flags and preview
+matches live before applying. Lazy-loaded on `:GrugFar`.
+
+**Keymaps:**
+
+| Key | Mode | Action |
+|---|---|---|
+| `<leader>sr` | normal, visual | Open search & replace (visual seeds the search) |
+| `<leader>sw` | normal | Open with the word under the cursor pre-filled |
+| `<leader>sf` | normal | Open scoped to the current file |
+
+### `nvim-mini/mini.ai`
+
+Extends Neovim's `a`/`i` text objects with smarter, more numerous targets. The
+built-in `f` (function call) and `a` (argument) objects give the motions from
+the plan **without** treesitter-textobjects. Works in operator-pending and
+visual modes.
+
+**Text objects (use with any operator, e.g. `d`, `c`, `y`, `v`):**
+
+| Object | Selects |
+|---|---|
+| `af` / `if` | A function **call** — `daf` deletes `foo(bar)`, `dif` its args |
+| `aa` / `ia` | A function **argument** — `cia` changes the argument under cursor |
+| `a)` `a]` `a}` | Balanced brackets (and `i` variants for inside) |
+| `` a` `` `a"` `a'` | Quoted strings |
+| `at` / `it` | HTML/XML tag |
+| `a?` / `i?` | User-prompted region (type start/end on the fly) |
+
+Prefix with a count (e.g. `2ia`) and use `n`/`l` (next/last) for the
+`mini.ai`-specific `an`/`al` search behavior.
