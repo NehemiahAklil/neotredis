@@ -2,11 +2,14 @@ return {
 	"neovim/nvim-lspconfig",
 	dependencies = {
 		"stevearc/conform.nvim",
+		{ "mason-org/mason.nvim", opts = {} },
 		{
-			"mason-org/mason.nvim",
-			opts = { ensure_installed = { "pyright", "gopls", "html", "ts_ls", "emmet_ls", "vue_ls" } },
+			"mason-org/mason-lspconfig.nvim",
+			opts = {
+				ensure_installed = { "pyright", "gopls", "html", "ts_ls", "emmet_ls", "vue_ls" },
+				automatic_enable = false,
+			},
 		},
-		{ "mason-org/mason-lspconfig.nvim", config = function() end },
 		{ "hrsh7th/cmp-nvim-lsp" },
 		{ "hrsh7th/nvim-cmp" },
 	},

@@ -21,8 +21,8 @@ vim.opt.undofile = true
 
 vim.opt.scrolloff = 8
 vim.opt.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
-vim.smoothscroll = true
+vim.opt.smoothscroll = true
 
-vim.termguicolors = true
+vim.opt.termguicolors = true
 
 vim.opt.updatetime = 50

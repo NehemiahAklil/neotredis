@@ -4,8 +4,6 @@ require("neotredis.remap")
 require("neotredis.lazy")
 require("neotredis.neovide")
 
-vim.cmd("colorscheme ayu-dark")
-
 -- disable italics
 local hl_groups = vim.api.nvim_get_hl(0, {})
 

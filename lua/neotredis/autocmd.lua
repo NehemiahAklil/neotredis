@@ -38,7 +38,7 @@ autocmd({ "CursorMoved", "CursorMovedI" }, {
 autocmd({ "BufWritePre" }, {
 	group = TheNeotredisGroup,
 	pattern = "*",
-	command = [[%s/\s+$//e]],
+	command = [[%s/\s\+$//e]],
 })
 
 autocmd("LspAttach", {
@@ -71,15 +71,6 @@ autocmd("LspAttach", {
 		end, opts)
 		vim.keymap.set("n", "<leader>vrn", function()
 			vim.lsp.buf.rename()
-		end, opts)
-		vim.keymap.set("n", "<C-h>", function()
-			vim.lsp.buf.signature_help()
-		end, opts)
-		vim.keymap.set("n", "<[d", function()
-			vim.diagnostic.goto_next()
-		end, opts)
-		vim.keymap.set("n", "<]d", function()
-			vim.diagnostic.goto_prev()
 		end, opts)
 	end,
 })
