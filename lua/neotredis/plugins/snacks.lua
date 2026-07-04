@@ -7,7 +7,10 @@ return {
 		notifier = { enabled = true },
 		quickfile = { enabled = true },
 		words = { enabled = true },
-		picker = { enabled = true },
+		-- ui_select replaces vim.ui.select (flutter-tools' device/emulator
+		-- picker, code actions, etc.) with the snacks picker UI instead of
+		-- the plain cmdline list -- no need for a separate dressing.nvim.
+		picker = { enabled = true, ui_select = true },
 		zen = { enabled = true },
 		-- dashboard-nvim and FTerm.nvim still own these roles until Stage 4
 		-- (PLAN.md) replaces them; enabling both here would double-fire on
