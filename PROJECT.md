@@ -14,7 +14,7 @@
 - **LSP:** `neovim/nvim-lspconfig` + `mason-org/mason.nvim` /
   `mason-lspconfig.nvim` for server install/management, configured in
   `lua/neotredis/plugins/lsp.lua`.
-- **Completion:** `hrsh7th/nvim-cmp`, configured in
+- **Completion:** `saghen/blink.cmp`, configured in
   `lua/neotredis/plugins/autocomplete.lua`.
 - **Treesitter:** `arborist.nvim` wrapper (not `nvim-treesitter-textobjects`
   directly), configured in `lua/neotredis/plugins/treesitter.lua`.
@@ -38,7 +38,7 @@
 | `lua/neotredis/utils.lua` | Shared helper functions. |
 | `lua/neotredis/plugins/lsp.lua` | LSP servers, mason, diagnostics config. |
 | `lua/neotredis/plugins/lazydev.lua` | `lazydev.nvim` — Lua/nvim-API completion for `lua_ls`. |
-| `lua/neotredis/plugins/autocomplete.lua` | `nvim-cmp` sources and mappings. |
+| `lua/neotredis/plugins/autocomplete.lua` | `blink.cmp` sources, keymap, and appearance. |
 | `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker, zen); git keymaps `<leader>gg` lazygit, `<leader>gB` gitbrowse. |
 | `lua/neotredis/plugins/treesitter.lua` | Treesitter via `arborist.nvim`. |
 | `lua/neotredis/plugins/telescope.lua` | Fuzzy finder + keymaps (`<leader>f*`). |
