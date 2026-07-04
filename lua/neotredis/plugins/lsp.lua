@@ -10,8 +10,7 @@ return {
 				automatic_enable = false,
 			},
 		},
-		{ "hrsh7th/cmp-nvim-lsp" },
-		{ "hrsh7th/nvim-cmp" },
+		{ "saghen/blink.cmp" },
 	},
 	opts = {
 		diagnostics = {
@@ -37,8 +36,7 @@ return {
 	},
 	config = function()
 		require("mason").setup()
-		local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-		capabilities.textDocument.completion.completionItem.snippetSupport = true
+		local capabilities = require("blink.cmp").get_lsp_capabilities()
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
