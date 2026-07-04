@@ -39,14 +39,15 @@
 | `lua/neotredis/plugins/lsp.lua` | LSP servers, mason, diagnostics config. |
 | `lua/neotredis/plugins/lazydev.lua` | `lazydev.nvim` — Lua/nvim-API completion for `lua_ls`. |
 | `lua/neotredis/plugins/autocomplete.lua` | `blink.cmp` sources, keymap, and appearance. |
-| `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker, zen); git keymaps `<leader>gg` lazygit, `<leader>gB` gitbrowse. |
+| `lua/neotredis/plugins/snacks.lua` | First-class `snacks.nvim` spec (notifier, bigfile, words, quickfile, picker w/ `ui_select`, zen); git keymaps `<leader>gg` lazygit, `<leader>gB` gitbrowse. |
 | `lua/neotredis/plugins/treesitter.lua` | Treesitter via `arborist.nvim`. |
 | `lua/neotredis/plugins/telescope.lua` | Fuzzy finder + keymaps (`<leader>f*`). |
 | `lua/neotredis/plugins/flash.lua` | `flash.nvim` — jump/search motion (`s`/`S`/`r`/`R`). |
 | `lua/neotredis/plugins/trouble.lua` | `trouble.nvim` — diagnostics/symbols/references list UI (`<leader>x*`). |
 | `lua/neotredis/plugins/todo_comments.lua` | `todo-comments.nvim` — TODO/FIXME highlighting and nav (`]t`/`[t`, `<leader>x*`, `<leader>ft`). |
 | `lua/neotredis/plugins/grug-far.lua` | `grug-far.nvim` — project-wide search & replace over ripgrep (`<leader>sr/sw/sf`). |
-| `lua/neotredis/plugins/dap.lua` | DAP: `nvim-dap` + `debugmaster.nvim` (DEBUG mode UI, `<leader>d` toggle), `nvim-dap-virtual-text`, `mason-nvim-dap.nvim`. VSCode-style `<F5>/<F9>/<F10>/<F11>/<F12>` plus a `<leader>d*` group. Python (`nvim-dap-python`, `<leader>dp*`), Go (`nvim-dap-go`, `<leader>dg*`), and JS/TS node + browser (Vue/React) adapters wired directly against mason's `js-debug-adapter` (`pwa-node`/`pwa-chrome`); flutter lands in a follow-up PR (Stage 5 of `PLAN.md`). |
+| `lua/neotredis/plugins/dap.lua` | DAP: `nvim-dap` + `debugmaster.nvim` (DEBUG mode UI, `<leader>d` toggle), `nvim-dap-virtual-text`, `mason-nvim-dap.nvim`. VSCode-style `<F5>/<F9>/<F10>/<F11>/<F12>` plus a `<leader>d*` group. Python (`nvim-dap-python`, `<leader>dp*`), Go (`nvim-dap-go`, `<leader>dg*`), and JS/TS node + browser (Vue/React) adapters wired directly against mason's `js-debug-adapter` (`pwa-node`/`pwa-chrome`). |
+| `lua/neotredis/plugins/flutter.lua` | `flutter-tools.nvim` — Flutter/Dart run, hot reload/restart, devices, outline, DevTools, and `nvim-dap` wiring (`debugger.enabled = true`). Manages `dartls` itself, not via `lsp.lua`. `<leader>F*` keymaps. Closes out Stage 5 of `PLAN.md`. |
 | `lua/neotredis/plugins/mini-ai.lua` | `mini.ai` — extended `a`/`i` text objects (`daf`, `cia`, brackets, quotes, tags). |
 | `lua/neotredis/plugins/file_tree.lua` | neo-tree file explorer. |
 | `lua/neotredis/plugins/file_browser.lua` | telescope-file-browser extension. |
@@ -72,4 +73,5 @@
   `<leader>n*` (minimap), `<leader>z*` (zen — true-zen + snacks.zen share the
   namespace without key collisions), `<leader>o*` (opencode), `<leader>c*`
   (claude code), `<leader>a` (harpoon), `<leader>u` (undotree), `<leader>d*`
-  (dap — `<leader>d` itself toggles debugmaster's DEBUG mode).
+  (dap — `<leader>d` itself toggles debugmaster's DEBUG mode), `<leader>F*`
+  (flutter-tools — capital `F`, distinct from lowercase `f*`/telescope).

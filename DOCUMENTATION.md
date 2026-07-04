@@ -353,3 +353,62 @@ breakpoint via `dap.listeners`). The Chrome/browser config was verified to
 register correctly with the right adapter/type wiring, but a real
 Vite-dev-server + Chrome round-trip wasn't exercised headlessly — that
 needs a live project and browser to fully confirm.
+
+## Stage 5d — Flutter (closes out Stage 5)
+
+Fourth and final DAP PR — the one explicitly marked must-have. Unlike every
+other language in this series, Flutter/Dart debugging isn't wired through
+mason at all.
+
+### `nvim-flutter/flutter-tools.nvim`
+
+The maintained org home of akinsho's original plugin. Manages the whole
+Flutter dev loop — running, hot reload/restart, device/emulator selection,
+DevTools, an outline window — and, with `debugger.enabled = true`, wires
+`nvim-dap` automatically via the Dart SDK's own debug adapter. Lazy-loaded
+on `ft = "dart"`.
+
+**Important difference from python/go/js:** flutter-tools does **not**
+pre-register a static `dap.configurations.dart` at startup the way
+`nvim-dap-python`/`nvim-dap-go` do. It builds `dap.adapters.dart` and the
+launch config dynamically, inside its own `:FlutterRun`/`:FlutterDebug`
+command handlers, using the actual project paths resolved at invocation
+time. So Flutter debugging goes through flutter-tools' own commands
+(`<leader>Fr` etc.) rather than the generic `<F5>`/`<leader>dc` — this
+matches how VSCode's own Flutter extension owns that flow too, rather than
+exposing a generic launch-config entry.
+
+flutter-tools also explicitly warns against configuring `dartls` through
+`nvim-lspconfig` — it manages the Dart LSP itself. Since `lsp.lua` never
+configured `dartls`, there was nothing to remove there; this PR only adds
+`flutter.lua`, it doesn't touch `lsp.lua`.
+
+**`vim.ui.select`:** flutter-tools needs a `vim.ui.select` provider for its
+device/emulator picker. Rather than adding `dressing.nvim`, `snacks.lua`
+now sets `picker.ui_select = true`, so the existing `snacks.nvim` picker
+handles it (confirmed via a headless test — `vim.ui.select` only gets
+overridden once a UI attaches, via the `UIEnter` autocmd, which is why a
+plain headless probe without a simulated UI attach appeared not to work).
+
+**Keymaps:**
+
+| Key | Action |
+|---|---|
+| `<leader>Fr` | `:FlutterRun` |
+| `<leader>FR` | `:FlutterRestart` (hot restart) |
+| `<leader>Fh` | `:FlutterReload` (hot reload) |
+| `<leader>Fq` | `:FlutterQuit` |
+| `<leader>Fd` | `:FlutterDevices` |
+| `<leader>Fe` | `:FlutterEmulators` |
+| `<leader>Fo` | `:FlutterOutlineToggle` |
+| `<leader>FD` | `:FlutterDevTools` |
+
+**Verification note:** this sandbox has no Flutter/Dart SDK installed, so a
+real `flutter run` + breakpoint round-trip isn't possible here. What *was*
+verified: the plugin loads cleanly on a scratch `.dart`/`pubspec.yaml`
+project, all command names above are confirmed against the installed
+plugin's own source (not guessed from the README), and calling
+`:FlutterRun` without the SDK present fails gracefully (a caught Lua error
+from the missing SDK path lookup, not a crash) — nvim stays fully
+responsive. The actual debug-session behavior needs a machine with the
+Flutter SDK installed to confirm end-to-end.
