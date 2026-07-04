@@ -209,3 +209,62 @@ visual modes.
 
 Prefix with a count (e.g. `2ia`) and use `n`/`l` (next/last) for the
 `mini.ai`-specific `an`/`al` search behavior.
+
+## Stage 5a — DAP core
+
+First DAP addition (see `PLAN.md` Stage 5). Lays down the language-agnostic
+debugger stack; per-language adapters (python, go, ts/js, vue/react, flutter)
+land in follow-up PRs.
+
+### `mfussenegger/nvim-dap` + `miroshQa/debugmaster.nvim`
+
+`nvim-dap` is the Debug Adapter Protocol client — it talks to a per-language
+debug adapter (configured separately) to set breakpoints, step, and inspect
+state. `debugmaster.nvim` supplies the UI: a modal **DEBUG mode** (like
+Insert/Normal, but for debugging) assembled from nvim-dap's own native
+widgets, instead of a multi-window `dap-ui` layout. Also brings in
+`jbyuki/one-small-step-for-vimkind` (`osv`), which lets DEBUG mode be
+test-driven against this very Neovim/Lua config without any language adapter
+configured yet.
+
+> Note: debugmaster's own README quickstart snippet lists the plugin under a
+> bogus GitHub owner (`MironPascalCaseFan/debugmaster.nvim`) — the real repo
+> is `miroshQa/debugmaster.nvim`, which is what's pinned here.
+
+**Keymaps (normal mode, outside DEBUG mode):**
+
+| Key | Action |
+|---|---|
+| `<leader>d` | Toggle DEBUG mode |
+| `<F5>` / `<leader>dc` | Continue / start debugging |
+| `<F9>` / `<leader>db` | Toggle breakpoint |
+| `<leader>dB` | Set a conditional breakpoint (prompts for the condition) |
+| `<F10>` | Step over |
+| `<F11>` | Step into |
+| `<F12>` | Step out |
+| `<leader>dr` | Toggle the REPL |
+| `<leader>dl` | Re-run the last debug config |
+| `<leader>dt` | Terminate the debug session |
+
+Inside DEBUG mode itself, debugmaster's own keymaps take over (`o` step over,
+`m` step into, `q` step out, `r` run to cursor, `u`/`U` toggle panel/float,
+`H` for help) — see the plugin's docs.
+
+### `theHamsta/nvim-dap-virtual-text`
+
+Shows variable values inline as virtual text while stepping through code —
+genuinely nicer than VSCode's hover-to-inspect for a quick glance.
+
+### `jay-babu/mason-nvim-dap.nvim`
+
+Bridges `mason.nvim` (already used for LSP servers, see `lsp.lua`) with
+`nvim-dap`, so debug adapters install the same way LSP servers do. Currently
+`ensure_installed = {}` — each follow-up PR adds its language's adapter name
+here as it's wired up.
+
+### `.vscode/launch.json` support
+
+`nvim-dap` reads VSCode's own `launch.json` natively via
+`require("dap.ext.vscode")` (auto-invoked on `dap.continue()`) — no extra
+plugin needed. Projects that already ship VSCode debug configs get them for
+free.
