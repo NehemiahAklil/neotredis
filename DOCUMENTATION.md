@@ -258,9 +258,10 @@ genuinely nicer than VSCode's hover-to-inspect for a quick glance.
 ### `jay-babu/mason-nvim-dap.nvim`
 
 Bridges `mason.nvim` (already used for LSP servers, see `lsp.lua`) with
-`nvim-dap`, so debug adapters install the same way LSP servers do. Currently
-`ensure_installed = {}` — each follow-up PR adds its language's adapter name
-here as it's wired up.
+`nvim-dap`, so debug adapters install the same way LSP servers do.
+`ensure_installed` uses mason-nvim-dap's own dap-adapter names (not raw mason
+package names — e.g. `"python"` maps to mason's `debugpy` package), and grows
+as each language gets wired up (currently `{ "python", "delve" }`).
 
 ### `.vscode/launch.json` support
 
@@ -268,3 +269,38 @@ here as it's wired up.
 `require("dap.ext.vscode")` (auto-invoked on `dap.continue()`) — no extra
 plugin needed. Projects that already ship VSCode debug configs get them for
 free.
+
+## Stage 5b — Python + Go adapters
+
+Second DAP PR — wires the two simplest per-language adapters on top of
+Stage 5a's core. TS/JS, Vue/React, and Flutter follow in later PRs.
+
+### `mfussenegger/nvim-dap-python`
+
+Registers the `debugpy` adapter and default launch/attach configs for
+Python, pointed at mason's own debugpy install
+(`mason/packages/debugpy/venv/bin/python`) so it doesn't depend on a system
+Python. Lazy-loaded on `ft = "python"`.
+
+**Keymaps (buffer-local, python filetype):**
+
+| Key | Action |
+|---|---|
+| `<leader>dpm` | Debug the test method closest to the cursor |
+| `<leader>dpc` | Debug the test class closest to the cursor |
+
+Test runner is auto-detected (`pytest`/`django`/`unittest`) by probing the
+project for `pytest.ini`/`manage.py`/`pyproject.toml`'s `tool.pytest`.
+
+### `leoluz/nvim-dap-go`
+
+Registers the `delve` (`dlv`) adapter and launch/attach/test configs for Go.
+`dlv` resolves via mason's `PATH` injection, no explicit path needed.
+Lazy-loaded on `ft = "go"`.
+
+**Keymaps (buffer-local, go filetype):**
+
+| Key | Action |
+|---|---|
+| `<leader>dgt` | Debug the test closest to the cursor (via treesitter) |
+| `<leader>dgl` | Re-run the last go test debug session |
