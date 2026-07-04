@@ -46,7 +46,7 @@
 | `lua/neotredis/plugins/trouble.lua` | `trouble.nvim` — diagnostics/symbols/references list UI (`<leader>x*`). |
 | `lua/neotredis/plugins/todo_comments.lua` | `todo-comments.nvim` — TODO/FIXME highlighting and nav (`]t`/`[t`, `<leader>x*`, `<leader>ft`). |
 | `lua/neotredis/plugins/grug-far.lua` | `grug-far.nvim` — project-wide search & replace over ripgrep (`<leader>sr/sw/sf`). |
-| `lua/neotredis/plugins/dap.lua` | DAP: `nvim-dap` + `debugmaster.nvim` (DEBUG mode UI, `<leader>d` toggle), `nvim-dap-virtual-text`, `mason-nvim-dap.nvim`. VSCode-style `<F5>/<F9>/<F10>/<F11>/<F12>` plus a `<leader>d*` group. Python (`nvim-dap-python`, `<leader>dp*`) and Go (`nvim-dap-go`, `<leader>dg*`) adapters wired; ts/js, vue/react, flutter land in follow-up PRs (Stage 5 of `PLAN.md`). |
+| `lua/neotredis/plugins/dap.lua` | DAP: `nvim-dap` + `debugmaster.nvim` (DEBUG mode UI, `<leader>d` toggle), `nvim-dap-virtual-text`, `mason-nvim-dap.nvim`. VSCode-style `<F5>/<F9>/<F10>/<F11>/<F12>` plus a `<leader>d*` group. Python (`nvim-dap-python`, `<leader>dp*`), Go (`nvim-dap-go`, `<leader>dg*`), and JS/TS node + browser (Vue/React) adapters wired directly against mason's `js-debug-adapter` (`pwa-node`/`pwa-chrome`); flutter lands in a follow-up PR (Stage 5 of `PLAN.md`). |
 | `lua/neotredis/plugins/mini-ai.lua` | `mini.ai` — extended `a`/`i` text objects (`daf`, `cia`, brackets, quotes, tags). |
 | `lua/neotredis/plugins/file_tree.lua` | neo-tree file explorer. |
 | `lua/neotredis/plugins/file_browser.lua` | telescope-file-browser extension. |

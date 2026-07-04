@@ -28,8 +28,9 @@ return {
 			dependencies = { "mason-org/mason.nvim" },
 			opts = {
 				-- mason-nvim-dap's own dap-adapter names, not raw mason
-				-- package names (e.g. "python" <-> mason's "debugpy").
-				ensure_installed = { "python", "delve" },
+				-- package names (e.g. "python" <-> mason's "debugpy",
+				-- "js" <-> mason's "js-debug-adapter").
+				ensure_installed = { "python", "delve", "js" },
 				automatic_installation = true,
 			},
 		},
@@ -90,4 +91,71 @@ return {
 			desc = "Debug Go: Last Test",
 		},
 	},
+	config = function()
+		local dap = require("dap")
+
+		-- vscode-js-debug is a single server that multiplexes every JS/TS
+		-- runtime ("pwa-node", "pwa-chrome", ...) through the `type` field
+		-- in each configuration — one adapter definition, reused as-is for
+		-- Chrome (community-standard pattern, not a separate binary).
+		dap.adapters["pwa-node"] = {
+			type = "server",
+			host = "localhost",
+			port = "${port}",
+			executable = {
+				command = "node",
+				args = {
+					vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js",
+					"${port}",
+				},
+			},
+		}
+		dap.adapters["pwa-chrome"] = dap.adapters["pwa-node"]
+
+		for _, language in ipairs({ "typescript", "javascript" }) do
+			dap.configurations[language] = {
+				{
+					type = "pwa-node",
+					request = "launch",
+					name = "Launch file (node)",
+					program = "${file}",
+					cwd = "${workspaceFolder}",
+					skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+				},
+				{
+					type = "pwa-node",
+					request = "launch",
+					name = "Launch file (tsx runtime, for .ts)",
+					program = "${file}",
+					cwd = "${workspaceFolder}",
+					runtimeExecutable = "npx",
+					runtimeArgs = { "tsx" },
+					skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+				},
+				{
+					type = "pwa-node",
+					request = "attach",
+					name = "Attach to process (--inspect)",
+					processId = require("dap.utils").pick_process,
+					cwd = "${workspaceFolder}",
+					skipFiles = { "<node_internals>/**", "**/node_modules/**" },
+				},
+			}
+		end
+
+		for _, language in ipairs({ "typescriptreact", "javascriptreact", "vue" }) do
+			dap.configurations[language] = {
+				{
+					type = "pwa-chrome",
+					request = "launch",
+					name = "Launch Chrome against dev server",
+					url = function()
+						return vim.fn.input("Dev server URL: ", "http://localhost:5173")
+					end,
+					webRoot = "${workspaceFolder}",
+					sourceMaps = true,
+				},
+			}
+		end
+	end,
 }
