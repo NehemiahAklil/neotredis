@@ -304,3 +304,52 @@ Lazy-loaded on `ft = "go"`.
 |---|---|
 | `<leader>dgt` | Debug the test closest to the cursor (via treesitter) |
 | `<leader>dgl` | Re-run the last go test debug session |
+
+## Stage 5c — JS/TS node + browser (Vue/React) adapters
+
+Third DAP PR — the fiddliest of the five languages. One thing to understand
+up front: **vscode-js-debug is a single multiplexing server**, not one
+binary per runtime. `dap.adapters["pwa-chrome"] = dap.adapters["pwa-node"]`
+literally reuses the same adapter definition — the `type` field in each
+`dap.configurations` entry tells the one server which session kind
+(`pwa-node`, `pwa-chrome`, ...) to start. No `nvim-dap-vscode-js` wrapper
+plugin needed (it's unmaintained); this is direct `dap.adapters` /
+`dap.configurations` config against mason's `js-debug-adapter` package —
+the exact same engine VSCode itself uses.
+
+`mason-nvim-dap.nvim`'s `ensure_installed` now includes `"js"` (its own
+dap-adapter name for the `js-debug-adapter` mason package).
+
+### Node (`typescript`, `javascript`)
+
+Three configs, picked via `<leader>dc`/`<F5>` (nvim-dap prompts for one if
+more than one applies):
+
+| Config | What it does |
+|---|---|
+| Launch file (node) | Runs the current file with plain `node`. |
+| Launch file (tsx runtime, for .ts) | Runs the current file via `npx tsx` so plain `.ts` files execute directly, without a build step. Requires `tsx` as a project dependency (or resolvable via `npx`). |
+| Attach to process (--inspect) | Attaches to an already-running `node --inspect` process (prompts to pick one via `dap.utils.pick_process`). |
+
+All three set `skipFiles` to skip stepping into `node_internals`/
+`node_modules`.
+
+### Browser (`typescriptreact`, `javascriptreact`, `vue`)
+
+One config — "Launch Chrome against dev server" — prompts for the dev
+server URL (default `http://localhost:5173`, Vite's default port; override
+for Vue CLI/CRA/Next's `3000`/`8080`) and launches Chrome against it with
+`webRoot`/`sourceMaps` set, so breakpoints set in `.vue`/`.tsx` source map
+back correctly instead of landing in compiled output.
+
+This is the one place sourcemap/`webRoot` tuning may still be needed per
+project (monorepos, custom `outDir`, etc.) — `.vscode/launch.json` support
+(already available since Stage 5a) is the escape hatch for anything
+project-specific that these defaults don't cover.
+
+**Verification note:** the `node` launch config was verified fully
+end-to-end (breakpoint set, session launched, confirmed stopped at the
+breakpoint via `dap.listeners`). The Chrome/browser config was verified to
+register correctly with the right adapter/type wiring, but a real
+Vite-dev-server + Chrome round-trip wasn't exercised headlessly — that
+needs a live project and browser to fully confirm.
