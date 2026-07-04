@@ -27,12 +27,24 @@ return {
 			"jay-babu/mason-nvim-dap.nvim",
 			dependencies = { "mason-org/mason.nvim" },
 			opts = {
-				-- Per-language adapters (debugpy, delve, js-debug-adapter,
-				-- ...) get their `dap`-adapter-name entries added here in
-				-- the PRs that wire each language up.
-				ensure_installed = {},
+				-- mason-nvim-dap's own dap-adapter names, not raw mason
+				-- package names (e.g. "python" <-> mason's "debugpy").
+				ensure_installed = { "python", "delve" },
 				automatic_installation = true,
 			},
+		},
+		{
+			"mfussenegger/nvim-dap-python",
+			ft = "python",
+			config = function()
+				local debugpy_python = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+				require("dap-python").setup(debugpy_python)
+			end,
+		},
+		{
+			"leoluz/nvim-dap-go",
+			ft = "go",
+			opts = {},
 		},
 	},
 	keys = {
@@ -53,5 +65,29 @@ return {
 		{ "<leader>dr", function() require("dap").repl.toggle() end, desc = "Toggle REPL" },
 		{ "<leader>dl", function() require("dap").run_last() end, desc = "Run Last" },
 		{ "<leader>dt", function() require("dap").terminate() end, desc = "Terminate" },
+		{
+			"<leader>dpm",
+			function() require("dap-python").test_method() end,
+			ft = "python",
+			desc = "Debug Python: Test Method",
+		},
+		{
+			"<leader>dpc",
+			function() require("dap-python").test_class() end,
+			ft = "python",
+			desc = "Debug Python: Test Class",
+		},
+		{
+			"<leader>dgt",
+			function() require("dap-go").debug_test() end,
+			ft = "go",
+			desc = "Debug Go: Test",
+		},
+		{
+			"<leader>dgl",
+			function() require("dap-go").debug_last_test() end,
+			ft = "go",
+			desc = "Debug Go: Last Test",
+		},
 	},
 }
