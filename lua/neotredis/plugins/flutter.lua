@@ -9,6 +9,11 @@ return {
 	-- NOTE: flutter-tools manages dartls itself; do NOT configure it via
 	-- nvim-lspconfig / lsp.lua (its own README warns against this).
 	opts = {
+		-- flutter is managed by mise; its PATH shim is only injected by the
+		-- shell's `mise activate` hook, which Neovim may not inherit
+		-- depending on how the terminal/session was started. Asking mise
+		-- directly for the SDK root sidesteps that PATH dependency.
+		flutter_lookup_cmd = "mise where flutter",
 		debugger = {
 			enabled = true,
 		},
