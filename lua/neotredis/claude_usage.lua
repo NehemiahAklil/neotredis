@@ -8,15 +8,19 @@
 -- account limit percentage).
 --
 -- That endpoint is known to 429 aggressively under frequent polling
--- (anthropics/claude-code#31637, #31021), so this module polls on a slow
--- timer, caches the result, and de-dupes concurrent/rapid refetches. The
--- lualine component only ever reads the cache -- it never makes a network
--- call on the redraw path.
+-- (anthropics/claude-code#31637, #31021) -- confirmed in practice, not just
+-- theory: this account got 429'd during development. So on a 429 we back off
+-- exponentially (5m, 10m, 20m, ... capped at 30m) instead of hammering it on
+-- a fixed interval, and the lualine component shows a distinct "429"
+-- indicator rather than going silently blank, so a persistent throttle
+-- doesn't look identical to "not working". The component still only ever
+-- reads the cache -- it never makes a network call on the redraw path.
 
 local M = {}
 
-local REFRESH_MS = 5 * 60 * 1000 -- background poll interval: the 5h/7d windows don't move fast enough to need more
-local MIN_REFRESH_S = 60 -- floor between any two network fetches, manual or timer-driven
+local REFRESH_MS = 5 * 60 * 1000 -- base background poll interval
+local MAX_BACKOFF_MS = 30 * 60 * 1000 -- cap for 429 backoff
+local MIN_ATTEMPT_GAP_S = 30 -- floor between any two network attempts, manual or scheduled
 local CREDENTIALS_PATH = vim.fn.expand("~/.claude/.credentials.json")
 local USAGE_URL = "https://api.anthropic.com/api/oauth/usage"
 
@@ -24,13 +28,16 @@ local cache = {
 	text = "",
 	five_hour = nil, -- { utilization = <0-100>, resets_at = <iso8601> }
 	weekly = nil,
-	fetched_at = 0,
+	fetched_at = 0, -- last *successful* fetch
+	last_attempt_at = 0, -- last attempt, successful or not
 	fetching = false,
 	pending_callback = nil,
 	last_error = nil,
 }
 
 local timer = nil
+local started = false
+local consecutive_429s = 0
 
 local function read_token()
 	if vim.fn.filereadable(CREDENTIALS_PATH) == 0 then
@@ -99,54 +106,70 @@ local function severity_group(pct)
 	end
 end
 
-local function build_statusline()
-	if not cache.five_hour or not cache.weekly then
+-- Renders the lualine text. Real data always wins once we have it (even if
+-- the *latest* refresh attempt failed -- stale-but-real beats no data). Only
+-- falls back to an error placeholder before the first successful fetch, and
+-- stays silent when there's genuinely nothing to show (not logged in).
+local function update_display()
+	if cache.five_hour and cache.weekly then
+		cache.text = string.format(
+			"🤖 5h:%d%% wk:%d%%",
+			math.floor(cache.five_hour.utilization + 0.5),
+			math.floor(cache.weekly.utilization + 0.5)
+		)
+	elseif not cache.last_error then
 		cache.text = ""
-		return
+	elseif cache.last_error:match("^not logged in") then
+		cache.text = ""
+	elseif cache.last_error:match("429") then
+		cache.text = "🤖 429"
+	else
+		cache.text = "🤖 …"
 	end
-	cache.text = string.format(
-		"🤖 5h:%d%% wk:%d%%",
-		math.floor(cache.five_hour.utilization + 0.5),
-		math.floor(cache.weekly.utilization + 0.5)
-	)
 end
 
 local function on_response(res)
 	cache.fetching = false
 	if res.code ~= 0 or not res.stdout or res.stdout == "" then
 		cache.last_error = "curl failed (exit " .. tostring(res.code) .. ")"
+		update_display()
 		return
 	end
 	local body, status = res.stdout:match("^(.*)\n(%d+)%s*$")
 	if not status then
 		cache.last_error = "unexpected curl output"
+		update_display()
 		return
 	end
 	if status == "429" then
-		cache.last_error = "rate limited by Anthropic (429) -- showing last known values"
+		cache.last_error = "rate limited by Anthropic (429)"
+		update_display()
 		return
 	end
 	if status ~= "200" then
 		cache.last_error = "HTTP " .. status
+		update_display()
 		return
 	end
 	local ok, decoded = pcall(vim.json.decode, body)
 	if not ok or type(decoded) ~= "table" or not decoded.five_hour or not decoded.seven_day then
 		cache.last_error = "bad response body"
+		update_display()
 		return
 	end
 	cache.five_hour = decoded.five_hour
 	cache.weekly = decoded.seven_day
 	cache.fetched_at = os.time()
 	cache.last_error = nil
-	build_statusline()
+	update_display()
 end
 
--- `force` bypasses the freshness check but never bypasses the in-flight
--- guard, so at most one curl call is ever outstanding at a time -- the
--- background timer and `:ClaudeUsage` share the same budget.
-local function fetch(force, callback)
-	if not force and cache.five_hour and (os.time() - cache.fetched_at) < MIN_REFRESH_S then
+-- At most one curl call is ever outstanding, and attempts (manual or
+-- scheduled) are floored to one per MIN_ATTEMPT_GAP_S -- the background
+-- scheduler already paces itself well above that floor via backoff, so this
+-- floor mainly protects against `:ClaudeUsage` being mashed while throttled.
+local function fetch(callback)
+	if (os.time() - cache.last_attempt_at) < MIN_ATTEMPT_GAP_S then
 		if callback then
 			callback()
 		end
@@ -161,12 +184,14 @@ local function fetch(force, callback)
 	local token = read_token()
 	if not token then
 		cache.last_error = "not logged in (no ~/.claude/.credentials.json)"
+		update_display()
 		if callback then
 			callback()
 		end
 		return
 	end
 	cache.fetching = true
+	cache.last_attempt_at = os.time()
 	vim.system({
 		"curl",
 		"-s",
@@ -196,22 +221,41 @@ local function fetch(force, callback)
 	end)
 end
 
-local function ensure_timer()
+local function schedule_next(delay_ms)
 	if timer then
-		return
+		timer:stop()
+		timer:close()
 	end
 	timer = (vim.uv or vim.loop).new_timer()
 	timer:start(
+		delay_ms,
 		0,
-		REFRESH_MS,
 		vim.schedule_wrap(function()
-			fetch(false)
+			fetch(function()
+				local next_delay
+				if cache.last_error and cache.last_error:match("429") then
+					consecutive_429s = consecutive_429s + 1
+					next_delay = math.min(REFRESH_MS * (2 ^ consecutive_429s), MAX_BACKOFF_MS)
+				else
+					consecutive_429s = 0
+					next_delay = REFRESH_MS
+				end
+				schedule_next(next_delay)
+			end)
 		end)
 	)
 end
 
---- Lualine component: returns the cached "5h:N% wk:N%" string. Never blocks
---- and never makes a network call -- safe to call on every redraw.
+local function ensure_timer()
+	if started then
+		return
+	end
+	started = true
+	schedule_next(0)
+end
+
+--- Lualine component: returns the cached display string. Never blocks and
+--- never makes a network call -- safe to call on every redraw.
 function M.statusline()
 	ensure_timer()
 	return cache.text
@@ -219,12 +263,18 @@ end
 
 --- Lualine `color` field: tints the component by whichever of the two
 --- windows is closer to its limit, reusing the built-in Diagnostic* colors.
+--- Falls back to a dim `Comment` tint for the "429"/pending placeholders.
 function M.color()
-	if not cache.five_hour or not cache.weekly then
+	if not cache.text or cache.text == "" then
 		return {}
 	end
-	local worst = math.max(cache.five_hour.utilization, cache.weekly.utilization)
-	local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = severity_group(worst), link = false })
+	local group
+	if cache.five_hour and cache.weekly then
+		group = severity_group(math.max(cache.five_hour.utilization, cache.weekly.utilization))
+	else
+		group = "Comment"
+	end
+	local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
 	if ok and hl and hl.fg then
 		return { fg = string.format("#%06x", hl.fg) }
 	end
@@ -235,7 +285,7 @@ end
 --- as the background timer) and notifies with both windows and their reset
 --- countdowns.
 function M.show()
-	fetch(true, function()
+	fetch(function()
 		if not cache.five_hour or not cache.weekly then
 			vim.notify(
 				"Claude usage unavailable" .. (cache.last_error and (": " .. cache.last_error) or ""),
@@ -257,7 +307,7 @@ function M.show()
 			),
 		}
 		if cache.last_error then
-			table.insert(lines, "(" .. cache.last_error .. ")")
+			table.insert(lines, "(latest refresh: " .. cache.last_error .. ")")
 		end
 		vim.notify(table.concat(lines, "\n"), vim.log.levels.INFO, { title = "Claude Usage" })
 	end)
@@ -268,6 +318,5 @@ vim.api.nvim_create_user_command("ClaudeUsage", function()
 end, { desc = "Show Claude Code 5-hour and weekly usage limits" })
 
 ensure_timer()
-fetch(false)
 
 return M
