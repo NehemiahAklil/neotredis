@@ -19,3 +19,11 @@ end, { desc = "Replace hex with HSL" })
 
 -- Exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
+
+-- Claude Code usage (5h / weekly account limits). Calls the module directly
+-- rather than `:ClaudeUsage` so it works regardless of whether lualine.nvim
+-- (which also requires this module for its statusline component) has loaded
+-- yet.
+vim.keymap.set("n", "<leader>cu", function()
+	require("neotredis.claude_usage").show()
+end, { desc = "Claude usage (5h / weekly)" })

@@ -412,3 +412,38 @@ plugin's own source (not guessed from the README), and calling
 from the missing SDK path lookup, not a crash) — nvim stays fully
 responsive. The actual debug-session behavior needs a machine with the
 Flutter SDK installed to confirm end-to-end.
+
+## Claude Code usage tracker
+
+Not part of the staged DX audit — a standalone addition. Shows the *actual*
+Claude Code account rate-limit usage (not an estimate) in the statusline.
+
+### `lua/neotredis/claude_usage.lua`
+
+A small self-contained module, not a third-party plugin. Existing usage
+trackers like `ccusage.nvim` only estimate token consumption by parsing local
+JSONL transcript logs — they can't reflect the real account limit percentage.
+This module instead reads Anthropic's own OAuth usage endpoint
+(`GET https://api.anthropic.com/api/oauth/usage`, authenticated with the
+token Claude Code already stores at `~/.claude/.credentials.json`) — the same
+source Claude Code's built-in statusline and `/usage` command read from.
+
+It polls in the background every 5 minutes via an async `curl` (`vim.system`,
+never blocking) and caches the result; the lualine component only ever reads
+that cache, never the network, so redraws stay instant. Fetches are also
+de-duplicated and rate-floored (minimum 60s between calls) because the
+endpoint is known to 429 aggressively under frequent polling (see
+anthropics/claude-code#31637 and #31021).
+
+Wired into `lua/neotredis/plugins/lualine.lua` as a `lualine_x` component
+(`🤖 5h:N% wk:N%`, colored via the built-in `DiagnosticOk/Warn/Error` groups
+by whichever window — 5-hour session or 7-day weekly — is closer to its
+limit). Hidden entirely (empty string) if not logged in or before the first
+successful fetch.
+
+**Keymaps / commands:**
+
+| Key / Command | Action |
+|---|---|
+| `<leader>cu` | Force-refresh and show a detailed notification: both windows' percentages and reset countdowns |
+| `:ClaudeUsage` | Same as above |
