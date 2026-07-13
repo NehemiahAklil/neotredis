@@ -36,6 +36,7 @@
 | `lua/neotredis/remap.lua` | Non-plugin global keymaps. |
 | `lua/neotredis/neovide.lua` | Neovide GUI-specific settings. |
 | `lua/neotredis/utils.lua` | Shared helper functions. |
+| `lua/neotredis/claude_usage.lua` | Polls Anthropic's OAuth usage endpoint (real 5h/weekly account rate limits, not a token estimate) on a background timer; feeds `lualine.lua`'s `lualine_x` component and the `:ClaudeUsage` command (`<leader>cu`, set in `remap.lua`). |
 | `lua/neotredis/plugins/lsp.lua` | LSP servers, mason, diagnostics config. |
 | `lua/neotredis/plugins/lazydev.lua` | `lazydev.nvim` — Lua/nvim-API completion for `lua_ls`. |
 | `lua/neotredis/plugins/autocomplete.lua` | `blink.cmp` sources, keymap, and appearance. |
@@ -72,6 +73,9 @@
 - Leader-key namespaces in use: `<leader>f*` (telescope), `<leader>g*` (git),
   `<leader>n*` (minimap), `<leader>z*` (zen — true-zen + snacks.zen share the
   namespace without key collisions), `<leader>o*` (opencode), `<leader>c*`
-  (claude code), `<leader>a` (harpoon), `<leader>u` (undotree), `<leader>d*`
-  (dap — `<leader>d` itself toggles debugmaster's DEBUG mode), `<leader>F*`
-  (flutter-tools — capital `F`, distinct from lowercase `f*`/telescope).
+  (claude code; `<leader>cu` is the usage tracker, set in `remap.lua` rather
+  than `plugins/ai/claude_code.lua` since it doesn't depend on
+  `claudecode.nvim`), `<leader>a` (harpoon), `<leader>u` (undotree),
+  `<leader>d*` (dap — `<leader>d` itself toggles debugmaster's DEBUG mode),
+  `<leader>F*` (flutter-tools — capital `F`, distinct from lowercase
+  `f*`/telescope).
