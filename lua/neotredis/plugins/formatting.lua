@@ -24,7 +24,14 @@ return {
 				go = { "gofmt" },
 				--
 				yaml = { "yamlfmt", "yq", stop_after_first = true },
-				json = { "prettier", "yq", stop_after_first = true },
+				json = { "prettier", "yq_json", stop_after_first = true },
+			},
+			formatters = {
+				yq_json = {
+					command = "yq",
+					args = { "-P", "-o=json", "-" },
+					stdin = true,
+				},
 			},
 		})
 		vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
