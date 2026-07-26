@@ -4,7 +4,7 @@ return {
 
 	dependencies = {
 		"nvim-lua/plenary.nvim",
-		"ahmedkhalf/project.nvim",
+		"Zeioth/project.nvim",
 	},
 
 	config = function()
