@@ -104,7 +104,9 @@ return {
 			},
 			filetypes = tsserver_filetypes,
 		})
-		-- Configure ts_ls with Vue plugin
+		-- Configure ts_ls for Vue only: vue_ls delegates TS work to ts_ls
+		-- via @vue/typescript-plugin (hybrid mode). Plain TS/JS goes to tsgo
+		-- below, which does not yet support the TS plugin system Vue needs.
 		vim.lsp.config("ts_ls", {
 			capabilities = capabilities,
 			init_options = {
@@ -112,7 +114,18 @@ return {
 					vue_plugin,
 				},
 			},
-			filetypes = tsserver_filetypes,
+			filetypes = { "vue" },
+		})
+
+		-- Configure tsgo (TypeScript 7 / native Go port) for non-Vue TS/JS.
+		-- Far lighter and faster than tsserver. Installed via:
+		--   npm i -g @typescript/native-preview --prefix ~/.local
+		local tsgo_bin = vim.fn.expand("~/.local/bin/tsgo")
+		vim.lsp.config("tsgo", {
+			cmd = { tsgo_bin, "--lsp", "--stdio" },
+			capabilities = capabilities,
+			filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact" },
+			root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
 		})
 
 		-- Configure emmet_ls
@@ -166,7 +179,7 @@ return {
 		})
 
 		-- Enable all configured servers
-		vim.lsp.enable({ "gopls", "html", "ts_ls", "emmet_ls", "vue_ls", "pyright", "lua_ls" })
+		vim.lsp.enable({ "gopls", "html", "ts_ls", "tsgo", "emmet_ls", "vue_ls", "pyright", "lua_ls" })
 
 		-- Set highlight group for Vue components
 		vim.api.nvim_set_hl(0, "@lsp.type.component", { link = "@type" })
