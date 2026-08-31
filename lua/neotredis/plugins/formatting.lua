@@ -25,6 +25,7 @@ return {
 				--
 				yaml = { "yamlfmt", "yq", stop_after_first = true },
 				json = { "prettier", "yq_json", stop_after_first = true },
+				jsonc = { "prettier", "yq_json", stop_after_first = true },
 			},
 			formatters = {
 				yq_json = {
